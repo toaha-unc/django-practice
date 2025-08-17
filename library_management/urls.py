@@ -75,13 +75,14 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('', lambda request: redirect('/swagger/'), name='home'),
+    path('', lambda request: redirect('/swagger-ui/'), name='home'),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
     path('api/', include('library.urls')),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', public_schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    re_path(r'^swagger/$', PublicSwaggerView.as_view(), name='schema-swagger-ui'),
+    re_path(r'^swagger/$', public_schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^swagger-ui/$', PublicSwaggerView.as_view(), name='swagger-ui'),
     re_path(r'^redoc/$', public_schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
