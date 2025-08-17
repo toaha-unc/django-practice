@@ -9,34 +9,35 @@ from .serializers import (
     AuthorSerializer, BookSerializer, MemberSerializer, 
     BorrowRecordSerializer, BorrowBookSerializer, ReturnBookSerializer
 )
+from .permissions import IsLibrarianOrReadOnly, IsLibrarianOrMemberReadOnly, IsLibrarian
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
     """ViewSet for managing authors."""
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsLibrarianOrReadOnly]
 
 
 class BookViewSet(viewsets.ModelViewSet):
     """ViewSet for managing books."""
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsLibrarianOrReadOnly]
 
 
 class MemberViewSet(viewsets.ModelViewSet):
     """ViewSet for managing members."""
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsLibrarian]
 
 
 class BorrowRecordViewSet(viewsets.ModelViewSet):
     """ViewSet for managing borrowing records."""
     queryset = BorrowRecord.objects.all()
     serializer_class = BorrowRecordSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsLibrarianOrMemberReadOnly]
 
     @action(detail=False, methods=['post'])
     def borrow(self, request):

@@ -20,9 +20,11 @@ class BookSerializer(serializers.ModelSerializer):
 
 class MemberSerializer(serializers.ModelSerializer):
     """Serializer for the Member model."""
+    username = serializers.CharField(source='user.username', read_only=True)
+    
     class Meta:
         model = Member
-        fields = ['id', 'name', 'email', 'membership_date']
+        fields = ['id', 'user', 'username', 'name', 'email', 'membership_date']
 
 
 class BorrowRecordSerializer(serializers.ModelSerializer):

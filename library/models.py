@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 class Author(models.Model):
@@ -41,6 +42,7 @@ class Book(models.Model):
 
 class Member(models.Model):
     """Model representing a library member."""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='member_profile', null=True, blank=True)
     name = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
     membership_date = models.DateField(default=timezone.now)
