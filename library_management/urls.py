@@ -31,6 +31,13 @@ class PublicSchemaGenerator(OpenAPISchemaGenerator):
             for operation in path.values():
                 if isinstance(operation, dict):
                     operation.pop('security', None)
+                    # Also remove any authentication-related parameters
+                    if 'parameters' in operation:
+                        operation['parameters'] = [p for p in operation['parameters'] 
+                                                 if p.get('name') not in ['Authorization', 'authorization']]
+        # Remove global security definitions
+        schema.pop('securityDefinitions', None)
+        schema.pop('security', None)
         return schema
 
 # Public schema view for documentation (no authentication required)
@@ -38,7 +45,7 @@ public_schema_view = get_schema_view(
    openapi.Info(
       title="Library Management API",
       default_version='v1',
-      description="A comprehensive API for managing a library system with authentication and role-based permissions",
+      description="A comprehensive API for managing a library system. Note: API endpoints require authentication, but this documentation is publicly accessible.",
       terms_of_service="https://www.google.com/policies/terms/",
       contact=openapi.Contact(email="contact@library.com"),
       license=openapi.License(name="BSD License"),
@@ -46,6 +53,7 @@ public_schema_view = get_schema_view(
    public=True,
    permission_classes=(permissions.AllowAny,),
    generator_class=PublicSchemaGenerator,
+   authentication_classes=[],
 )
 
 # Private schema view for authenticated access
