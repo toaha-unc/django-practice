@@ -1,29 +1,30 @@
 from django.http import HttpResponse
-from django.template import Template, Context
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
-from drf_yasg.generators import OpenAPISchemaGenerator
-from drf_yasg import openapi
-from rest_framework import permissions
-from rest_framework import settings as drf_settings # Imported for temporary override
+from django.conf import settings
 
 @method_decorator(csrf_exempt, name='dispatch')
 class PublicSwaggerView(View):
     """Custom Swagger view that serves documentation without authentication."""
     
     def get(self, request):
-        # Create Swagger UI HTML that points to the schema endpoint
-        swagger_html = """
+        # Get the current domain for proper URL generation
+        protocol = 'https' if request.is_secure() else 'http'
+        domain = request.get_host()
+        base_url = f"{protocol}://{domain}"
+        
+        # Create Swagger UI HTML
+        swagger_html = f"""
 <!DOCTYPE html>
 <html>
 <head>
     <title>Library Management API</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="/static/drf-yasg/swagger-ui-dist/swagger-ui.css">
+    <link rel="stylesheet" type="text/css" href="{base_url}/static/drf-yasg/swagger-ui-dist/swagger-ui.css">
     <style>
-        /* Hide all authentication-related elements */
+        /* Hide authentication elements for public documentation */
         .authorize-wrapper,
         .btn.authorize,
         .auth-wrapper,
@@ -31,25 +32,36 @@ class PublicSwaggerView(View):
         [data-sw-translate="authorize"],
         .swagger-ui .auth-wrapper,
         .swagger-ui .authorize-wrapper,
-        .swagger-ui .authorize {
+        .swagger-ui .authorize {{
             display: none !important;
-        }
+        }}
         
         /* Hide any login-related elements */
         .swagger-ui .auth-btn,
-        .swagger-ui .login-btn {
+        .swagger-ui .login-btn {{
             display: none !important;
-        }
+        }}
+        
+        /* Add some custom styling */
+        .swagger-ui .topbar {{
+            display: none;
+        }}
+        
+        .swagger-ui .info {{
+            margin: 20px 0;
+        }}
     </style>
 </head>
 <body>
     <div id="swagger-ui"></div>
-    <script src="/static/drf-yasg/swagger-ui-dist/swagger-ui-bundle.js"></script>
-    <script src="/static/drf-yasg/swagger-ui-dist/swagger-ui-standalone-preset.js"></script>
+    <script src="{base_url}/static/drf-yasg/swagger-ui-dist/swagger-ui-bundle.js"></script>
+    <script src="{base_url}/static/drf-yasg/swagger-ui-dist/swagger-ui-standalone-preset.js"></script>
     <script>
-        window.onload = function() {
-            const ui = SwaggerUIBundle({
-                url: '/swagger/?format=openapi',
+        window.onload = function() {{
+            console.log('Loading Swagger UI...');
+            
+            const ui = SwaggerUIBundle({{
+                url: '{base_url}/swagger/?format=openapi',
                 dom_id: '#swagger-ui',
                 presets: [
                     SwaggerUIBundle.presets.apis,
@@ -68,29 +80,26 @@ class PublicSwaggerView(View):
                 refetchWithAuth: false,
                 refetchOnLogout: false,
                 fetchSchemaWithQuery: true,
-                onComplete: function() {
+                onComplete: function() {{
+                    console.log('Swagger UI loaded successfully');
                     // Hide any remaining auth elements after the UI loads
                     const authElements = document.querySelectorAll(
                         '.authorize-wrapper, .btn.authorize, [data-sw-translate="authorize"], ' +
                         '.auth-wrapper, .auth-container, .swagger-ui .authorize, ' +
                         '.swagger-ui .auth-btn, .swagger-ui .login-btn'
                     );
-                    authElements.forEach(el => {
+                    authElements.forEach(el => {{
                         el.style.display = 'none';
                         el.remove();
-                    });
-                    
-                    // Also hide any elements with "login" in their text
-                    const allElements = document.querySelectorAll('*');
-                    allElements.forEach(el => {
-                        if (el.textContent && el.textContent.toLowerCase().includes('django login')) {
-                            el.style.display = 'none';
-                            el.remove();
-                        }
-                    });
-                }
-            });
-        };
+                    }});
+                }},
+                onError: function(error) {{
+                    console.error('Swagger UI error:', error);
+                    document.getElementById('swagger-ui').innerHTML = 
+                        '<h1>Error loading Swagger UI: ' + error.message + '</h1>';
+                }}
+            }});
+        }};
     </script>
 </body>
 </html>

@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-a$sl9s&jny(5*yvg&stjdj75a_4shbevzjcea$1a7^#xye)!co'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["*", "django-practice-six.vercel.app", ".vercel.app"]
+ALLOWED_HOSTS = ["*", "django-practice-six.vercel.app", ".vercel.app", "localhost", "127.0.0.1"]
 
 # Application definition
 
@@ -80,11 +80,11 @@ WSGI_APPLICATION = 'library_management.wsgi.app'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('dbname'),
-        'USER': config('user'),
-        'PASSWORD': config('password'),
-        'HOST': config('host'),
-        'PORT': config('port'),
+        'NAME': config('dbname', default='postgres'),
+        'USER': config('user', default='postgres.iquxptnnslogwzxhkvbq'),
+        'PASSWORD': config('password', default='Bondstone1234!'),
+        'HOST': config('host', default='aws-1-us-east-2.pooler.supabase.com'),
+        'PORT': config('port', default='5432'),
         'OPTIONS': {
             'sslmode': 'require',
             'connect_timeout': 10,
@@ -147,6 +147,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
     'DEFAULT_RENDERER_CLASSES': [

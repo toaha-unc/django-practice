@@ -20,47 +20,9 @@ from django.shortcuts import redirect
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from drf_yasg.generators import OpenAPISchemaGenerator
 from .views import PublicSwaggerView
 
-class PublicSchemaGenerator(OpenAPISchemaGenerator):
-    def get_schema(self, request=None, public=False):
-        """Generate schema without authentication requirements."""
-        schema = super().get_schema(request, public=True)
-        
-        # Remove all security-related fields
-        schema.pop('securityDefinitions', None)
-        schema.pop('security', None)
-        
-        # Remove security from all operations
-        for path in schema.get('paths', {}).values():
-            for operation in path.values():
-                if isinstance(operation, dict):
-                    operation.pop('security', None)
-                    # Remove authentication parameters
-                    if 'parameters' in operation:
-                        operation['parameters'] = [p for p in operation['parameters'] 
-                                                 if p.get('name') not in ['Authorization', 'authorization']]
-        
-        return schema
-
-# Public schema view for documentation (no authentication required)
-public_schema_view = get_schema_view(
-   openapi.Info(
-      title="Library Management API",
-      default_version='v1',
-      description="A comprehensive API for managing a library system. Note: API endpoints require authentication, but this documentation is publicly accessible.",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@library.com"),
-      license=openapi.License(name="BSD License"),
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny,),
-   generator_class=PublicSchemaGenerator,
-   authentication_classes=[],
-)
-
-# Private schema view for authenticated access
+# Schema view for Swagger documentation
 schema_view = get_schema_view(
    openapi.Info(
       title="Library Management API",
@@ -77,12 +39,11 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('', lambda request: redirect('/swagger-ui/'), name='home'),
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
     path('api/', include('library.urls')),
-    re_path(r'^swagger(?P<format>\.json|\.yaml)$', public_schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    re_path(r'^swagger/$', public_schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^swagger-ui/$', PublicSwaggerView.as_view(), name='swagger-ui'),
-    re_path(r'^redoc/$', public_schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
