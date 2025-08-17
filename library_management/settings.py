@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,8 +26,7 @@ SECRET_KEY = 'django-insecure-a$sl9s&jny(5*yvg&stjdj75a_4shbevzjcea$1a7^#xye)!co
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["vercel.app", "127.0.0.1", "localhost"]
 
 # Application definition
 
@@ -70,7 +70,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'library_management.wsgi.application'
+WSGI_APPLICATION = 'library_management.wsgi.app'
 
 
 # Database
@@ -79,13 +79,14 @@ WSGI_APPLICATION = 'library_management.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'library',
-        'USER': 'postgres',
-        'PASSWORD': 'bondstone',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': config('dbname'),
+        'USER': config('user'),
+        'PASSWORD': config('password'),
+        'HOST': config('host'),
+        'PORT': config('port'),
         'OPTIONS': {
-            'client_encoding': 'UTF8',
+            'sslmode': 'require',
+            'connect_timeout': 10,
         },
     }
 }
