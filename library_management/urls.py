@@ -21,23 +21,27 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from drf_yasg.generators import OpenAPISchemaGenerator
+from .views import PublicSwaggerView
 
 class PublicSchemaGenerator(OpenAPISchemaGenerator):
     def get_schema(self, request=None, public=False):
         """Generate schema without authentication requirements."""
         schema = super().get_schema(request, public=True)
-        # Remove security requirements from all operations
+        
+        # Remove all security-related fields
+        schema.pop('securityDefinitions', None)
+        schema.pop('security', None)
+        
+        # Remove security from all operations
         for path in schema.get('paths', {}).values():
             for operation in path.values():
                 if isinstance(operation, dict):
                     operation.pop('security', None)
-                    # Also remove any authentication-related parameters
+                    # Remove authentication parameters
                     if 'parameters' in operation:
                         operation['parameters'] = [p for p in operation['parameters'] 
                                                  if p.get('name') not in ['Authorization', 'authorization']]
-        # Remove global security definitions
-        schema.pop('securityDefinitions', None)
-        schema.pop('security', None)
+        
         return schema
 
 # Public schema view for documentation (no authentication required)
@@ -78,6 +82,6 @@ urlpatterns = [
     path('auth/', include('djoser.urls.jwt')),
     path('api/', include('library.urls')),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', public_schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    re_path(r'^swagger/$', public_schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^swagger/$', PublicSwaggerView.as_view(), name='schema-swagger-ui'),
     re_path(r'^redoc/$', public_schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
