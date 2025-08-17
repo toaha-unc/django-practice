@@ -21,7 +21,7 @@ class PublicSwaggerView(View):
     <title>Library Management API</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui.css">
+    <link rel="stylesheet" type="text/css" href="/static/drf-yasg/swagger-ui-dist/swagger-ui.css">
     <style>
         /* Hide all authentication-related elements */
         .authorize-wrapper,
@@ -44,8 +44,8 @@ class PublicSwaggerView(View):
 </head>
 <body>
     <div id="swagger-ui"></div>
-    <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"></script>
-    <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js"></script>
+    <script src="/static/drf-yasg/swagger-ui-dist/swagger-ui-bundle.js"></script>
+    <script src="/static/drf-yasg/swagger-ui-dist/swagger-ui-standalone-preset.js"></script>
     <script>
         window.onload = function() {
             const ui = SwaggerUIBundle({
