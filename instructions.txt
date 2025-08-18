@@ -1,0 +1,35 @@
+Practice Module 2: Authentication, Permissions & API Documentation
+Objective:
+In this assignment, you will enhance your Library Management System API by adding authentication, implementing proper permissions, and generating API documentation.
+ 
+Task 1: Implement Authentication Using Djoser & JWT
+1.	Set Up Authentication
+○	Install and configure Djoser for user authentication.
+○	Use Simple JWT for token-based authentication.
+2.	Implement User Registration & Login
+○	POST /auth/users/ → Register a new user
+○	POST /auth/jwt/create/ → Get access & refresh tokens
+○	POST /auth/jwt/refresh/ → Refresh access token
+○	POST /auth/jwt/verify/ → Verify a token
+3.	Test authentication using DRF Browsable API.
+ 
+Task 2: Implement Role-Based Permissions
+1.	Define Roles
+○	Librarian (Full access to books and users)
+○	Member (Can view books, borrow/return books but cannot add, update or delete books)
+2.	Restrict API Endpoints with Permissions
+○	Only librarians can add, update, or delete books.
+○	Members can only view books and borrow/return books.
+○	Use IsAuthenticated and IsAdminUser permissions.
+3.	Test API Permissions
+○	Try accessing restricted endpoints as different users.
+ 
+Task 3: Generate API Documentation with drf-yasg
+1.	Install and Configure drf-yasg
+○	Generate Swagger UI and ReDoc documentation.
+2.	Ensure all endpoints have proper docstrings for auto-documentation.
+3.	Test the API Documentation
+○	The API should be accessible at /swagger/ or /redoc/.
+
+
+link: https://django-practice-six.vercel.app/swagger-ui/
