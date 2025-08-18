@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.conf import settings
+from django.templatetags.static import static
 
 @method_decorator(csrf_exempt, name='dispatch')
 class PublicSwaggerView(View):
@@ -14,7 +15,7 @@ class PublicSwaggerView(View):
         domain = request.get_host()
         base_url = f"{protocol}://{domain}"
         
-        # Create Swagger UI HTML
+        # Create Swagger UI HTML using local static files with WhiteNoise
         swagger_html = f"""
 <!DOCTYPE html>
 <html>
@@ -49,6 +50,18 @@ class PublicSwaggerView(View):
         
         .swagger-ui .info {{
             margin: 20px 0;
+        }}
+        
+        /* Ensure proper loading */
+        body {{
+            margin: 0;
+            padding: 20px;
+            background: #fafafa;
+        }}
+        
+        #swagger-ui {{
+            max-width: 1200px;
+            margin: 0 auto;
         }}
     </style>
 </head>
