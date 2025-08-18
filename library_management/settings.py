@@ -77,15 +77,16 @@ WSGI_APPLICATION = 'library_management.wsgi.app'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# Using hardcoded settings for Vercel deployment
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('dbname', default='postgres'),
-        'USER': config('user', default='postgres.iquxptnnslogwzxhkvbq'),
-        'PASSWORD': config('password', default='Bondstone1234!'),
-        'HOST': config('host', default='aws-1-us-east-2.pooler.supabase.com'),
-        'PORT': config('port', default='5432'),
+        'NAME': 'postgres',
+        'USER': 'postgres.iquxptnnslogwzxhkvbq',
+        'PASSWORD': 'Bondstone1234!',
+        'HOST': 'aws-1-us-east-2.pooler.supabase.com',
+        'PORT': '5432',
         'OPTIONS': {
             'sslmode': 'require',
             'connect_timeout': 10,
