@@ -36,19 +36,19 @@ def create_admin_user():
         if created:
             admin_user.set_password('adminadmin')
             admin_user.save()
-            print("✅ Admin user created successfully!")
+            print("Admin user created successfully!")
             print("Username: admin")
             print("Password: adminadmin")
         else:
             # Update password if user exists
             admin_user.set_password('adminadmin')
             admin_user.save()
-            print("✅ Admin user password updated!")
+            print("Admin user password updated!")
             print("Username: admin")
             print("Password: adminadmin")
             
     except Exception as e:
-        print(f"❌ Error creating admin user: {e}")
+        print(f"Error creating admin user: {e}")
 
 def create_sample_data():
     """Create sample data if it doesn't exist."""
@@ -70,7 +70,7 @@ def create_sample_data():
             )
             authors.append(author)
             if created:
-                print(f"✅ Created author: {author.name}")
+                print(f"Created author: {author.name}")
 
         # Create books
         books_data = [
@@ -91,15 +91,15 @@ def create_sample_data():
                 }
             )
             if created:
-                print(f"✅ Created book: {book.title}")
+                print(f"Created book: {book.title}")
 
-        print("✅ Sample data created successfully!")
+        print("Sample data created successfully!")
         
     except Exception as e:
-        print(f"❌ Error creating sample data: {e}")
+        print(f"Error creating sample data: {e}")
 
 if __name__ == '__main__':
-    print("🚀 Setting up Library Management System...")
+    print("Setting up Library Management System...")
     create_admin_user()
     create_sample_data()
-    print("✅ Setup completed!")
+    print("Setup completed!")
